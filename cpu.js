@@ -24,6 +24,20 @@ class CPU {
       return map;
     }, {});
   }
+
+  getRegister(name) {
+    if (!(name in this.registerMap)) {
+      throw new Error(`getRegister: No such register '${name}'`);
+    }
+    return this.registers.getUint16(this.registerMap[name]);
+  }
+
+  setRegister(name, value) {
+    if (!(name in this.registerMap)) {
+      throw new Error(`setRegister: No such register '${name}'`);
+    }
+    return this.registers.setUint16(this.registerMap[name], value);
+  }
 }
 
 module.exports = CPU;
