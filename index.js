@@ -23,28 +23,6 @@ const cpu = new CPU(memory);
 
 let i = 0;
 
-writableBytes[i++] = instructions.MOV_LIT_REG;
-writableBytes[i++] = 0x51;
-writableBytes[i++] = 0x51;
-writableBytes[i++] = R1;
-
-writableBytes[i++] = instructions.MOV_LIT_REG;
-writableBytes[i++] = 0x42;
-writableBytes[i++] = 0x42;
-writableBytes[i++] = R2;
-
-writableBytes[i++] = instructions.PSH_REG;
-writableBytes[i++] = R1;
-
-writableBytes[i++] = instructions.PSH_REG;
-writableBytes[i++] = R2;
-
-writableBytes[i++] = instructions.POP;
-writableBytes[i++] = R1;
-
-writableBytes[i++] = instructions.POP;
-writableBytes[i++] = R2;
-
 cpu.debug();
 cpu.viewMemoryAt(cpu.getRegister("ip"));
 cpu.viewMemoryAt(0xffff - 1 - 6);
