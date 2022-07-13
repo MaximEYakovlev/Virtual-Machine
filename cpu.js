@@ -177,6 +177,36 @@ class CPU {
         return;
       }
 
+      // Move literal to memory
+      case instructions.MOV_LIT_MEM: {
+        const value = this.fetch16();
+        const address = this.fetch16();
+        this.memory.setUint16(address, value);
+        return;
+      }
+
+      // Move register* to register
+      case instructions.MOV_REG_PTR_REG: {
+        const r1 = this.fetchRegisterIndex();
+        const r2 = this.fetchRegisterIndex();
+        const ptr = this.registers.getUint16(r1);
+        const value = this.memory.getUint16(ptr);
+        this.registers.setUint16(r2, value);
+        return;
+      }
+
+      // Move value at [literal + register] to register
+      case instructions.MOV_LIT_OFF_REG: {
+        const baseAddress = this.fetch16();
+        const r1 = this.fetchRegisterIndex();
+        const r2 = this.fetchRegisterIndex();
+        const offset = this.registers.getUint16(r1);
+
+        const value = this.memory.getUint16(baseAddress + offset);
+        this.registers.setUint16(r2, value);
+        return;
+      }
+
       // Add register to register
       case instructions.ADD_REG_REG: {
         const r1 = this.fetchRegisterIndex();
