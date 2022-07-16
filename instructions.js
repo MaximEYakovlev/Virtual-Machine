@@ -16,6 +16,18 @@ const DEC_REG = 0x36;
 const MUL_LIT_REG = 0x20;
 const MUL_REG_REG = 0x21;
 
+const LSF_REG_LIT = 0x26;
+const LSF_REG_REG = 0x27;
+const RSF_REG_LIT = 0x2a;
+const RSF_REG_REG = 0x2b;
+const AND_REG_LIT = 0x2e;
+const AND_REG_REG = 0x2f;
+const OR_REG_LIT = 0x30;
+const OR_REG_REG = 0x31;
+const XOR_REG_LIT = 0x32;
+const XOR_REG_REG = 0x33;
+const NOT = 0x34;
+
 const JMP_NOT_EQ = 0x15;
 const PSH_LIT = 0x17;
 const PSH_REG = 0x18;
@@ -40,6 +52,17 @@ module.exports = {
   SUB_REG_REG,
   INC_REG,
   DEC_REG,
+  LSF_REG_LIT,
+  LSF_REG_REG,
+  RSF_REG_LIT,
+  RSF_REG_REG,
+  AND_REG_LIT,
+  AND_REG_REG,
+  OR_REG_LIT,
+  OR_REG_REG,
+  XOR_REG_LIT,
+  XOR_REG_REG,
+  NOT,
   MUL_LIT_REG,
   MUL_REG_REG,
   JMP_NOT_EQ,
