@@ -29,6 +29,18 @@ const XOR_REG_REG = 0x33;
 const NOT = 0x34;
 
 const JMP_NOT_EQ = 0x15;
+const JNE_REG = 0x40;
+const JEQ_REG = 0x3e;
+const JEQ_LIT = 0x41;
+const JLT_REG = 0x42;
+const JLT_LIT = 0x43;
+const JGT_REG = 0x44;
+const JGT_LIT = 0x45;
+const JLE_REG = 0x46;
+const JLE_LIT = 0x47;
+const JGE_REG = 0x48;
+const JGE_LIT = 0x49;
+
 const PSH_LIT = 0x17;
 const PSH_REG = 0x18;
 const POP = 0x1a;
@@ -66,6 +78,17 @@ module.exports = {
   MUL_LIT_REG,
   MUL_REG_REG,
   JMP_NOT_EQ,
+  JNE_REG,
+  JEQ_REG,
+  JEQ_LIT,
+  JLT_REG,
+  JLT_LIT,
+  JGT_REG,
+  JGT_LIT,
+  JLE_REG,
+  JLE_LIT,
+  JGE_REG,
+  JGE_LIT,
   PSH_LIT,
   PSH_REG,
   POP,
