@@ -1,0 +1,23 @@
+{
+  "name": "virtual-machine",
+  "version": "1.0.0",
+  "description": "ip: 0x0000 acc: 0x0000 r1: 0x0000 r2: 0x0000 r3: 0x0000 r4: 0x0000 r5: 0x0000 r6: 0x0000 r7: 0x0000 r8: 0x0000 sp: 0xfffe fp: 0xfffe",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaximEYakovlev/Virtual-Machine.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaximEYakovlev/Virtual-Machine/issues"
+  },
+  "homepage": "https://github.com/MaximEYakovlev/Virtual-Machine#readme",
+  "dependencies": {
+    "arcsecond": "^4.1.0"
+  }
+}
