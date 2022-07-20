@@ -1,4 +1,13 @@
+const { inspect } = require("util");
 const A = require("arcsecond");
+
+const deepLog = (x) =>
+  console.log(
+    inspect(x, {
+      depth: Infinity,
+      colors: true,
+    })
+  );
 
 const asType = (type) => (value) => ({ type, value });
 const mapJoin = (parser) => parser.map((items) => items.join(""));
@@ -44,3 +53,6 @@ const movLitToReg = A.coroutine(function* () {
     args: [arg1, arg2],
   });
 });
+
+const res = movLitToReg.run("mov s42, r4");
+deepLog(res);
