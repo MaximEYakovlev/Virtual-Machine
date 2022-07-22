@@ -53,6 +53,78 @@ const operator = A.choice([
   A.char("*").map(asType("OP_MULTIPLY")),
 ]);
 
+const last = (a) => a[a.length - 1];
+
+const typifyBracketedExpression = (expr) => {
+  const asBracketed = asType("BRACKETED_EXPRESSION");
+  return asBracketed(
+    expr.map((element) => {
+      if (Array.isArray(element)) {
+        return typifyBracketedExpression(element);
+      }
+      return element;
+    })
+  );
+};
+
+const bracketedExpr = A.coroutine(function* () {
+  const states = {
+    OPEN_BRACKET: 0,
+    OPERATOR_OR_CLOSING_BRACKET: 1,
+    ELEMENT_OR_OPENING_BRACKET: 2,
+    CLOSE_BRACKET: 3,
+  };
+  let state = states.ELEMENT_OR_OPENING_BRACKET;
+
+  const expr = [];
+  const stack = [expr];
+  yield A.char("(");
+
+  while (true) {
+    const nextChar = yield peek;
+
+    if (state === states.OPEN_BRACKET) {
+      yield A.char("(");
+      expr.push([]);
+      stack.push(last(expr));
+      yield A.optionalWhitespace;
+      state = states.ELEMENT_OR_OPENING_BRACKET;
+    } else if (state === states.CLOSE_BRACKET) {
+      yield A.char(")");
+      stack.pop();
+      if (stack.length === 0) {
+        // We've reached the end of the bracket expression
+        break;
+      }
+      yield A.optionalWhitespace;
+      state = states.OPERATOR_OR_CLOSING_BRACKET;
+    } else if (state === states.ELEMENT_OR_OPENING_BRACKET) {
+      if (nextChar === ")") {
+        yield A.fail("Unexpected end of expression");
+      }
+      if (nextChar === "(") {
+        state = states.OPEN_BRACKET;
+      } else {
+        last(stack).push(yield A.choice([hexLiteral, variable]));
+        yield A.optionalWhitespace;
+        state = states.OPERATOR_OR_CLOSING_BRACKET;
+      }
+    } else if (state === states.OPERATOR_OR_CLOSING_BRACKET) {
+      if (nextChar === ")") {
+        state = states.CLOSE_BRACKET;
+        continue;
+      }
+      last(stack).push(yield operator);
+      yield A.optionalWhitespace;
+      state = states.ELEMENT_OR_OPENING_BRACKET;
+    } else {
+      // This shouldn't happen!
+      throw new Error("Unknown state");
+    }
+  }
+  return typifyBracketedExpression(expr);
+});
+
 const squareBracketExpr = A.coroutine(function* () {
   yield A.char("[");
   yield A.optionalWhitespace;
@@ -106,5 +178,7 @@ const movLitToReg = A.coroutine(function* () {
   });
 });
 
-const res = movLitToReg.run("mov $42, r4");
+const res = movLitToReg.run(
+  "mov [$42 + !loc - ($05 * ($31 + !var) - $07)], r4"
+);
 deepLog(res);
