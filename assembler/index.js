@@ -51,6 +51,44 @@ parsedOutput.result.forEach((instruction) => {
   const metadata = instructions[instruction.value.instruction];
   machineCode.push(metadata.opcode);
 
+  if ([I.litReg, I.memReg].includes(metadata.type)) {
+    encodeLitOrMem(instruction.value.args[0]);
+    encodeReg(instruction.value.args[1]);
+  }
 
+  if ([I.regLit, I.regMem].includes(metadata.type)) {
+    encodeReg(instruction.value.args[0]);
+    encodeLitOrMem(instruction.value.args[1]);
+  }
 
+  if (I.regLit8 === metadata.type) {
+    encodeReg(instruction.value.args[0]);
+    encodeLit8(instruction.value.args[1]);
+  }
+
+  if ([I.regReg, I.regPtrReg].includes(metadata.type)) {
+    encodeReg(instruction.value.args[0]);
+    encodeReg(instruction.value.args[1]);
+  }
+
+  if (I.litMem === metadata.type) {
+    encodeLitOrMem(instruction.value.args[0]);
+    encodeLitOrMem(instruction.value.args[1]);
+  }
+
+  if (I.litOffReg === metadata.type) {
+    encodeLitOrMem(instruction.value.args[0]);
+    encodeReg(instruction.value.args[1]);
+    encodeReg(instruction.value.args[2]);
+  }
+
+  if (I.singleReg === metadata.type) {
+    encodeReg(instruction.value.args[0]);
+  }
+
+  if (I.singleLit === metadata.type) {
+    encodeLitOrMem(instruction.value.args[0]);
+  }
 });
+
+console.log(machineCode.join(" "));
