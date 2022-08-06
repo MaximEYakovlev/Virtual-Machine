@@ -35,6 +35,11 @@ const validIdentifier = mapJoin(
     A.possibly(A.regex(/^[a-zA-Z0-9_]+/)).map((x) => (x === null ? "" : x)),
   ])
 );
+
+const label = A.sequenceOf([validIdentifier, A.char(":"), A.optionalWhitespace])
+  .map(([labelName]) => labelName)
+  .map(T.label);
+
 const variable = A.char("!")
   .chain(() => validIdentifier)
   .map(T.variable);
@@ -48,6 +53,7 @@ const operator = A.choice([
 const peek = A.lookAhead(A.regex(/^./));
 
 module.exports = {
+  label,
   register,
   hexLiteral,
   address,
