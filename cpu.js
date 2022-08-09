@@ -6,6 +6,7 @@ class CPU {
   constructor(memory) {
     this.memory = memory;
 
+    this.registers = createMemory(registers.length * 2);
     this.registerMap = registers.reduce((map, name, i) => {
       map[name] = i * 2;
       return map;
