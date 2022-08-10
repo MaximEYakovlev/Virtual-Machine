@@ -12,4 +12,5 @@ module.exports = [
   "sp",
   "fp",
   "mb",
+  "im",
 ];
