@@ -3,7 +3,7 @@ const registers = require("./registers");
 const instructions = require("./instructions");
 
 class CPU {
-  constructor(memory) {
+  constructor(memory, interuptVectorAddress = 0x1000) {
     this.memory = memory;
 
     this.registers = createMemory(registers.length * 2);
