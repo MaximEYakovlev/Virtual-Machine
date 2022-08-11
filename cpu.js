@@ -3,7 +3,7 @@ const registers = require("./registers");
 const instructions = require("./instructions");
 
 class CPU {
-  constructor(memory, interuptVectorAddress = 0x1000) {
+  constructor(memory, interruptVectorAddress = 0x1000) {
     this.memory = memory;
 
     this.registers = createMemory(registers.length * 2);
@@ -11,6 +11,10 @@ class CPU {
       map[name] = i * 2;
       return map;
     }, {});
+
+    this.interruptVectorAddress = interruptVectorAddress;
+    this.isInInterruptHandler = false;
+    this.setRegister("im", 0xffff);
 
     this.setRegister("sp", 0xffff - 1);
     this.setRegister("fp", 0xffff - 1);
@@ -125,8 +129,54 @@ class CPU {
     return (this.fetch() % registers.length) * 2;
   }
 
+  handleInterrupt(value) {
+    const interruptBit = value % 0xf;
+    console.log(`CPU Interrupt :: ${interruptBit}`);
+
+    // If the interrupt is masked by the interrupt mask register
+    // then do not enter the interrupt handler
+    const isUnmasked = Boolean((1 << interruptBit) & this.getRegister("im"));
+    if (!isUnmasked) {
+      return;
+    }
+
+    // Calculate where in the interrupt vector we'll look
+    const addressPointer = this.interruptVectorAddress + interruptBit * 2;
+    // Get the address from the interrupt vector at that address
+    const address = this.memory.getUint16(addressPointer);
+
+    // We only save state when not already in an interrupt
+    if (!this.isInInterruptHandler) {
+      // 0 = 0 args. This is just to maintain our calling convention
+      // If this were a software defined interrupt, the caller is expected
+      // to supply any required data in registers
+      this.push(0);
+      // Save the state
+      this.pushState();
+    }
+
+    this.isInInterruptHandler = true;
+
+    // Jump to the interrupt handler
+    this.setRegister("ip", address);
+  }
+
   execute(instruction) {
     switch (instruction) {
+      case instructions.RET_INT.opcode: {
+        console.log("Return from interrupt");
+        this.isInInterruptHandler = false;
+        this.popState();
+        return;
+      }
+
+      case instructions.INT.opcode: {
+        // We're only looking at the least significant nibble
+        const interruptValue = this.fetch16() & 0xf;
+        this.handleInterrupt(interruptValue);
+        return;
+      }
+
       // Move literal into register
       case instructions.MOV_LIT_REG.opcode: {
         const literal = this.fetch16();
@@ -410,6 +460,7 @@ class CPU {
         if (value !== this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -422,6 +473,7 @@ class CPU {
         if (value !== this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -433,6 +485,7 @@ class CPU {
         if (value === this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -445,6 +498,7 @@ class CPU {
         if (value === this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -456,6 +510,7 @@ class CPU {
         if (value < this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -468,6 +523,7 @@ class CPU {
         if (value < this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -479,6 +535,7 @@ class CPU {
         if (value > this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -491,6 +548,7 @@ class CPU {
         if (value > this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -502,6 +560,7 @@ class CPU {
         if (value <= this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -514,6 +573,7 @@ class CPU {
         if (value <= this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -525,6 +585,7 @@ class CPU {
         if (value >= this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -537,6 +598,7 @@ class CPU {
         if (value >= this.getRegister("acc")) {
           this.setRegister("ip", address);
         }
+
         return;
       }
 
@@ -567,6 +629,7 @@ class CPU {
         const address = this.fetch16();
         this.pushState();
         this.setRegister("ip", address);
+        return;
       }
 
       // Call register
