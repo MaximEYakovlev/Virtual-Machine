@@ -17,6 +17,7 @@ const instruction = asType("INSTRUCTION");
 const label = asType("LABEL");
 const data = asType("DATA");
 const constant = asType("CONSTANT");
+const structure = asType("STRUCTURE");
 
 module.exports = {
   label,
@@ -33,4 +34,5 @@ module.exports = {
   instruction,
   data,
   constant,
+  structure,
 };
