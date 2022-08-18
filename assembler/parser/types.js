@@ -18,6 +18,7 @@ const label = asType("LABEL");
 const data = asType("DATA");
 const constant = asType("CONSTANT");
 const structure = asType("STRUCTURE");
+const interpretAs = asType("INTERPRET_AS");
 
 module.exports = {
   label,
@@ -35,4 +36,5 @@ module.exports = {
   data,
   constant,
   structure,
+  interpretAs,
 };

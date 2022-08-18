@@ -1,5 +1,6 @@
 const A = require("arcsecond");
 const T = require("./types");
+const interpretAs = require("./interpret-as");
 
 const { peek, hexLiteral, operator, variable } = require("./common");
 
