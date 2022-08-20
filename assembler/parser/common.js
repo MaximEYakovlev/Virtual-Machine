@@ -18,6 +18,7 @@ const register = A.choice([
   upperOrLowerStr("fp"),
   upperOrLowerStr("ip"),
   upperOrLowerStr("acc"),
+  upperOrLowerStr("mb"),
 ]).map(T.register);
 
 const hexDigit = A.regex(/^[0-9A-Fa-f]/);
@@ -35,14 +36,13 @@ const validIdentifier = mapJoin(
     A.possibly(A.regex(/^[a-zA-Z0-9_]+/)).map((x) => (x === null ? "" : x)),
   ])
 );
+const variable = A.char("!")
+  .chain(() => validIdentifier)
+  .map(T.variable);
 
 const label = A.sequenceOf([validIdentifier, A.char(":"), A.optionalWhitespace])
   .map(([labelName]) => labelName)
   .map(T.label);
-
-const variable = A.char("!")
-  .chain(() => validIdentifier)
-  .map(T.variable);
 
 const operator = A.choice([
   A.char("+").map(T.opPlus),
@@ -52,8 +52,12 @@ const operator = A.choice([
 
 const peek = A.lookAhead(A.regex(/^./));
 
+const optionalWhitespaceSurrounded = A.between(A.optionalWhitespace)(
+  A.optionalWhitespace
+);
+const commaSeparated = A.sepBy(optionalWhitespaceSurrounded(A.char(",")));
+
 module.exports = {
-  label,
   register,
   hexLiteral,
   address,
@@ -62,4 +66,7 @@ module.exports = {
   operator,
   upperOrLowerStr,
   peek,
+  label,
+  optionalWhitespaceSurrounded,
+  commaSeparated,
 };
